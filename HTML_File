@@ -1,0 +1,70 @@
+//Template/index.html
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>AJAX Page</title>
+<!-- BootStrap css -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/js/student.js"></script> 
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1>Student AJAX Management</h1>
+        
+           <!-- Centered Alert Card for Messages -->
+    <div class="d-flex justify-content-center">
+        <div id="alertCard" class="alert alert-info d-none text-center" role="alert">
+            <div id="alertMessage"></div>
+        </div>
+    </div>
+
+        <!-- Form for Create/Update -->
+        <div class="card p-3 mb-3">
+            <form id="studentForm">
+                <input type="hidden" id="studentId" name="id" />
+                <div class="form-group">
+                    <label for="studentname">Name:</label>
+                    <input type="text" class="form-control" id="studentname" name="studentname" required />
+                </div>
+                <div class="form-group">
+                    <label for="course">Course:</label>
+                    <input type="text" class="form-control" id="course" name="course" required />
+                </div>
+                <div class="form-group">
+                    <label for="fee">Fee:</label>
+                    <input type="number" class="form-control" id="fee" name="fee" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+
+        <!-- Table for Listing -->
+        <div class="card p-3">
+            <h2>Students List</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Fee</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable">
+                    <!-- Students will be loaded here by AJAX -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    
+
+</body>
+</html>
