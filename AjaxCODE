@@ -1,1 +1,106 @@
+//Static/Js/Student.js
 
+$(document).ready(function() {
+    // load all the students data
+    function loadStudents() {
+        $.ajax({
+            url: "/list",
+            method: "GET", 
+            success: function(students) {
+                let studentTable = "";
+                students.forEach(student => {
+                    studentTable += `
+                        <tr>
+                            <td>${student.id}</td>
+                            <td>${student.studentname}</td>
+                            <td>${student.course}</td>
+                            <td>${student.fee}</td>
+                            <td>
+                             <button class="btn btn-warning btn-sm" onclick="editStudent(${student.id})">Edit</button>
+                             <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                $("#studentTable").html(studentTable);
+            }
+        });
+    }
+
+	// for save/update student using submit button
+	$("#studentForm").submit(function(event) {
+	    // prevent the default form submission behavior
+	    event.preventDefault();
+	    
+	    // create an object with the form data
+	    const studentData = {
+	        id: $("#studentId").val(),
+	        studentname: $("#studentname").val(),
+	        course: $("#course").val(),
+	        fee: $("#fee").val()
+	    };
+	    
+	    // Make an AJAX post request to save the student data
+	    $.ajax({
+	        url: "/save",                  // endpoint to send the request to
+	        method: "POST",                // HTTP method to use
+	        contentType: "application/json", //content type of the request
+	        data: JSON.stringify(studentData), //data to send, converted to JSON
+	        success: function() {          // function to execute on successful request
+	            showAlert("Student saved successfully!", "alert-success"); //show success message
+	            $("#studentForm")[0].reset(); // reset the form
+	            loadStudents();            // reload the list of students
+	        },
+	        error: function(jqXHR, textStatus, errorThrown) { 
+	            showAlert("Error saving student: " + errorThrown, "alert-danger"); 
+	        }
+	    });
+	});
+
+
+    // for edit student
+    window.editStudent = function(id) {
+        $.ajax({
+            url: "/edit/" + id,
+            method: "GET",
+            success: function(student) {
+                $("#studentId").val(student.id);
+                $("#studentname").val(student.studentname);
+                $("#course").val(student.course);
+                $("#fee").val(student.fee);
+            },
+			error: function(jqXHR, textStatus, errorThrown) { 
+				//jqXHR=XMLHttpRequest object
+				showAlert("Error saving student: " + errorThrown, "alert-danger"); 
+				 		
+			}
+        });
+    };
+
+    // for delete student
+    window.deleteStudent = function(id) {
+        if (confirm("Are you sure you want to delete this student?")) {
+            $.ajax({
+                url: "/delete/" + id,
+                method: "DELETE",
+                success: function() {
+                    showAlert("Student deleted successfully!", "alert-danger");
+					$("#studentForm")[0].reset();
+                    loadStudents();
+                }
+            });
+        }
+    };
+
+    // Show Alert Message
+    function showAlert(message, alertType) {
+        $("#alertMessage").text(message);
+        $("#alertCard").removeClass("d-none alert-success alert-danger").addClass(alertType);
+        setTimeout(function() {
+            $("#alertCard").addClass("d-none");
+        }, 3000);
+    }
+
+    // Initial Load
+    loadStudents();
+});
