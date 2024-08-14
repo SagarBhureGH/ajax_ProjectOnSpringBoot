@@ -1,1 +1,124 @@
+//Application Properties
+spring.application.name=com.assesment.AJAX
+# Server port
+server.port=8099
 
+# Database Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/DB123
+spring.datasource.username=
+spring.datasource.password=
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Hibernate Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Thymeleaf Configuration
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.cache=false
+
+# Logging
+logging.level.org.springframework=INFO
+logging.level.org.hibernate=ERROR
+
+
+
+//Modal
+
+@Entity
+public class Student {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+    private String studentname;
+    private String course;
+    private int fee;
+//getter ,setter ,noargconstructor , argconstructor
+}
+
+
+//REpository
+@Repository
+public interface StudentRepository extends JpaRepository<Student, Long> {
+	
+}
+
+
+//Service Layer
+@Service
+public class StudentService {
+    
+    @Autowired
+    private StudentRepository repo;
+    
+    public List<Student> listAll() {
+        return repo.findAll();
+    }
+     
+    public void save(Student std) {
+        repo.save(std);
+    }
+
+
+
+    public Student getid(long id) {
+        return repo.findById(id).get();
+    }
+
+
+
+    public Student get(long id) {
+        return repo.findById(id).get();
+    }
+     
+    public void delete(long id) {
+        repo.deleteById(id);
+    }
+
+}
+
+//Controller
+
+@Controller
+public class StudentController {
+
+    @Autowired
+    private StudentService studentService;
+
+    @GetMapping("/")
+    public String index(Model model) {
+        model.addAttribute("student", new Student());
+        return "index";
+    }
+
+    @PostMapping("/save")
+    @ResponseBody
+    public String saveStudent(@RequestBody Student student) {
+        studentService.save(student);
+        return "Student saved successfully!";
+    }
+
+    @GetMapping("/list")
+    @ResponseBody
+    public List<Student> listStudents() {
+        return studentService.listAll();
+    }
+
+    @GetMapping("/edit/{id}")
+    @ResponseBody
+    public Student editStudent(@PathVariable Long id) {
+        return studentService.get(id);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public String deleteStudent(@PathVariable Long id) {
+        studentService.delete(id);
+        return "Student deleted successfully!";
+    }
+
+}
